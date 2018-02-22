@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.44657874, g: 0.49641258, b: 0.5748172, a: 1}
+  m_IndirectSpecularColor: {r: 0.43968812, g: 0.48809618, b: 0.5683211, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -171,13 +171,13 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 384616062}
-  m_LocalRotation: {x: 0.40821788, y: -0.23456968, z: 0.10938163, w: 0.8754261}
+  m_LocalRotation: {x: 0.6970171, y: -0.2582463, z: 0.017211119, w: 0.66871506}
   m_LocalPosition: {x: 0, y: 3, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 1
-  m_LocalEulerAnglesHint: {x: 50, y: -30, z: 0}
+  m_LocalEulerAnglesHint: {x: 70.23701, y: -108.100006, z: -85.29401}
 --- !u!1 &1073829689
 GameObject:
   m_ObjectHideFlags: 0
@@ -208,8 +208,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f2e6c0ca602b0f44faff20f3caff7ef3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  xSpeed: 0
-  gravity: 1
+  screenOffset: {x: 0, y: 0, z: 0}
+  screenSpace: {x: 0, y: 0, z: 0}
+  dragged: 0
+  velocity: {x: 0, y: 0}
+  initialSpeed: {x: 0, y: 0}
+  gravity: 100
+  bounceFactor: 0
+  offset: 0
+  mouseForceFactor: 10
 --- !u!135 &1073829691
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -270,13 +277,13 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1073829689}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: 0.39153898, y: -0, z: -0, w: 0.92016155}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 1.5, y: 1.5, z: 1.5}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 2
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 46.101, y: 0, z: 0}
 --- !u!1 &1076271396
 GameObject:
   m_ObjectHideFlags: 0
@@ -329,8 +336,8 @@ Camera:
   near clip plane: 0.3
   far clip plane: 1000
   field of view: 60
-  orthographic: 0
-  orthographic size: 5
+  orthographic: 1
+  orthographic size: 7.28
   m_Depth: -1
   m_CullingMask:
     serializedVersion: 2
@@ -372,3 +379,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   VertExtent: 0
   HorzExtent: 0
+  offset: 1.5

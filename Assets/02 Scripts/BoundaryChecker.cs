@@ -9,6 +9,8 @@ public class BoundaryChecker : MonoBehaviour {
 	public float VertExtent;
 	public float HorzExtent;
 
+	public float offset;
+
 	void Awake() {
 		MakeSingleton ();
 	}
@@ -30,7 +32,7 @@ public class BoundaryChecker : MonoBehaviour {
 	}
 
 	void calculateBounds(){
-		VertExtent = Camera.main.orthographicSize;
-		HorzExtent = (VertExtent * Screen.width / Screen.height);
+		VertExtent = Camera.main.orthographicSize - offset;
+		HorzExtent = (VertExtent * Screen.width / Screen.height) - offset;
 	}
 }

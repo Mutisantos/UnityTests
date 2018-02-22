@@ -6,57 +6,89 @@ using UnityEngine;
 //Script para manejar el comportamiento de un objeto que puede ser arrastrado con el mouse y moverse dentro de los límites de la pantalla
 public class BallThrowScript : MonoBehaviour {
 
-
-	Vector3 offset;
-	Vector3 screenSpace;
-	
-	bool dragged;
 	[SerializeField]
-	float xSpeed;
+	Vector3 screenOffset;
+	[SerializeField]
+	Vector3 screenSpace;
+	//Controlar que el elemento no sufra aceleraciones mientras sea arrastrado por el usuariogit 
+	[SerializeField]
+	bool dragged;
+	bool grounded;
 	Vector3 lastCursorPos;
 
-
-	protected Vector2 velocity;
-
+	[SerializeField]
+	Vector2 velocity;
+	[SerializeField]
+	Vector2 initialSpeed;
 	public float gravity;
+	public float bounceFactor;
+	public float offset;
+	public float mouseForceFactor;
 
 	// Use this for initialization
 	void Start () {
+		dragged = false;
 		lastCursorPos = new Vector3(Input.mousePosition.x,Input.mousePosition.y, screenSpace.z);
 		Cursor.lockState = CursorLockMode.Confined;
+		initialSpeed = Vector3.zero;
+		velocity = Vector3.zero;
 	}
 	
-	// Calculo 
+	// Calculo de los movimientos de la pelota en movimiento
 	void FixedUpdate () {
-		velocity += gravity * Physics2D.gravity * Time.deltaTime;
-		Vector2 deltapos = velocity * Time.deltaTime;
-		Vector2 move = Vector2.up * deltapos.y;
-		Movement(new Vector3(move.x,move.y,0));
-		checkLimits();
+		if(!dragged && !grounded){
+			//velocidad uniformemente acelerada en Ys
+			velocity.y = initialSpeed.y + (gravity * Physics2D.gravity.y * Time.deltaTime);
+			
+			//velocidad constante en X
+			velocity.x = initialSpeed.x;
+			Vector2 deltapos = velocity * Time.deltaTime;
+			//Movimiento horizontal
+			Vector2 move = Vector2.right * deltapos.x;
+			Movement(new Vector3(move.x,move.y,0));
+			//Movimiento vertical
+			move = Vector2.up * deltapos.y;
+			Movement(new Vector3(move.x,move.y,0));
+			checkLimits();
+		}
 	}
 
 	void OnMouseDown()
 	{
 		screenSpace = Camera.main.WorldToScreenPoint(transform.position);
-    	offset = transform.position - Camera.main.ScreenToWorldPoint(new Vector3(Input.mousePosition.x,Input.mousePosition.y, screenSpace.z));
+    	screenOffset = transform.position - Camera.main.ScreenToWorldPoint(new Vector3(Input.mousePosition.x,Input.mousePosition.y, screenSpace.z));
+	}
+
+	void OnMouseUp()
+	{
+		dragged = false;
 	}
 
 	void OnMouseDrag()
 	{
+		dragged = true;
+		grounded = false;
 		Vector3 curScreenSpace = new Vector3(Input.mousePosition.x, Input.mousePosition.y, screenSpace.z);    
- 	    //transformar la posición del mouse en una posición del mundo ajustada al offset
-		Vector3 curPosition = Camera.main.ScreenToWorldPoint(curScreenSpace) + offset;
+ 	    //transformar la posición del mouse en una posición del mundo ajustada al screenOffset
+		Vector3 curPosition = Camera.main.ScreenToWorldPoint(curScreenSpace) + screenOffset;
  	    //mover el objeto a la posición del cursor
     	transform.position = curPosition;
+		velocity = Vector3.zero;
 	}
 
+
 	//Detectar los cambios de velocidad del cursor para la velocidad en los ejes
-	void LateUpdate()
+	void Update()
 	{
-		Vector3 actualCursorPos = new Vector3(Input.mousePosition.x,Input.mousePosition.y, screenSpace.z);
-		xSpeed = Mathf.Abs(actualCursorPos.x - lastCursorPos.x);
-		Debug.Log(xSpeed);
-		lastCursorPos = actualCursorPos;
+		if(dragged){
+			Vector3 actualCursorPos = new Vector3(Input.mousePosition.x,Input.mousePosition.y, screenSpace.z);
+			float xSpeed = actualCursorPos.x - lastCursorPos.x;
+			float ySpeed = actualCursorPos.y - lastCursorPos.y;
+			initialSpeed = new Vector2(xSpeed/mouseForceFactor,ySpeed/mouseForceFactor);
+						
+			lastCursorPos = actualCursorPos;
+		}
+		
 	}
 
 
@@ -82,6 +114,10 @@ public class BallThrowScript : MonoBehaviour {
 		else if (transform.position.y < -vertExtent){//Abajo-> Rebote arriba
 			Cursor.lockState = CursorLockMode.Confined;
 			Debug.Log("abajo");
+			if(velocity.y <= offset){
+				grounded = true;
+			}
+			velocity = Vector3.zero;
 		}
 		if(newPosition.x != transform.position.x || newPosition.y != transform.position.y)
 			transform.position = (newPosition);
