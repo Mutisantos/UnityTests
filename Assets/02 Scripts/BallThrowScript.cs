@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 
 
-//Script para manejar el comportamiento de un objeto que puede ser arrastrado con el mouse y moverse dentro de los límites de la pantalla
+/**Script para manejar el comportamiento de un objeto que puede ser arrastrado con el mouse y moverse dentro de los límites de la pantalla
+* Esteban.Hernandez
+ */
 public class BallThrowScript : MonoBehaviour {
 
 	[SerializeField]
@@ -21,11 +23,11 @@ public class BallThrowScript : MonoBehaviour {
 	[SerializeField]
 	Vector2 initialSpeed;
 	public float gravity;
+	[Tooltip("Valores de 0.0f - 1.0f")]
 	public float bounceFactor;
 	public float offset;
 	public float mouseForceFactor;
 
-	// Use this for initialization
 	void Start () {
 		dragged = false;
 		lastCursorPos = new Vector3(Input.mousePosition.x,Input.mousePosition.y, screenSpace.z);
@@ -92,37 +94,40 @@ public class BallThrowScript : MonoBehaviour {
 	}
 
 
-	protected void checkLimits(){
+	void checkLimits(){
 		//La Camara puede ser redimensionarze
         float vertExtent = BoundaryChecker.instance.VertExtent;
 		float HorzExtent = BoundaryChecker.instance.HorzExtent;
-	
+		Vector2 bounceDir = Vector2.zero;
 		if(transform.position.x > HorzExtent){//Derecha-> Rebote a la izquierda
-			
-			Debug.Log("derecha");
-			Bounce(Vector3.left);
 
+			Debug.Log("derecha");
+			Bounce(Vector2.left);
+			bounceDir += Vector2.left;
 		}
 		if (transform.position.x < -HorzExtent){//Izquierda -> Rebote a la derecha
-			
 			Debug.Log("izquierda");
-			Bounce(Vector3.right);
+			Bounce(Vector2.right);
+			bounceDir += Vector2.right;
 		}
 		if(transform.position.y > vertExtent){//Arriba -> Rebote abajo
-			
 			Debug.Log("arriba");
-			Bounce(Vector3.down);
+			Bounce(Vector2.down);
+			bounceDir += Vector2.down;
 		}
 		if (transform.position.y < -vertExtent){//Abajo-> Rebote arriba
-			
 			Debug.Log("abajo");
-			Bounce(Vector3.up);
+			Bounce(Vector2.up);
+			bounceDir += Vector2.up;
 			if(velocity.y < offset){
 				grounded = true;
+				velocity.y = 0;
+				initialSpeed.y = 0;
 			}
 			
-			
 		}
+		
+
 
 			
 	}
@@ -132,10 +137,11 @@ public class BallThrowScript : MonoBehaviour {
 		transform.position = transform.position + move;
 	}
 
-	void Bounce(Vector3 normalVector){
-		var speed = velocity.magnitude;
-        var direction = Vector3.Reflect(velocity.normalized, normalVector);
+	void Bounce(Vector2 normalVector){
+		var speed = velocity.magnitude * bounceFactor;
+        var direction = Vector2.Reflect(velocity.normalized, normalVector);
 		velocity = speed * direction;
+		initialSpeed.x = speed * direction.x;
 	}
 
 
