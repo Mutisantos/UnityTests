@@ -38,8 +38,8 @@ public class BallThrowScript : MonoBehaviour {
 	void FixedUpdate () {
 		if(!dragged && !grounded){
 			//velocidad uniformemente acelerada en Ys
-			velocity.y = initialSpeed.y + (gravity * Physics2D.gravity.y * Time.deltaTime);
-			
+			velocity.y += initialSpeed.y + (gravity * Physics2D.gravity.y * Time.deltaTime);
+			initialSpeed.y *= 0.5f;
 			//velocidad constante en X
 			velocity.x = initialSpeed.x;
 			Vector2 deltapos = velocity * Time.deltaTime;
@@ -96,31 +96,34 @@ public class BallThrowScript : MonoBehaviour {
 		//La Camara puede ser redimensionarze
         float vertExtent = BoundaryChecker.instance.VertExtent;
 		float HorzExtent = BoundaryChecker.instance.HorzExtent;
-		Vector2 newPosition = transform.position;
-
+	
 		if(transform.position.x > HorzExtent){//Derecha-> Rebote a la izquierda
-			Cursor.lockState = CursorLockMode.Confined;
+			
 			Debug.Log("derecha");
+			Bounce(Vector3.left);
 
 		}
-		else if (transform.position.x < -HorzExtent){//Izquierda -> Rebote a la derecha
-			Cursor.lockState = CursorLockMode.Confined;
+		if (transform.position.x < -HorzExtent){//Izquierda -> Rebote a la derecha
+			
 			Debug.Log("izquierda");
+			Bounce(Vector3.right);
 		}
 		if(transform.position.y > vertExtent){//Arriba -> Rebote abajo
-			Cursor.lockState = CursorLockMode.Confined;
+			
 			Debug.Log("arriba");
+			Bounce(Vector3.down);
 		}
-		else if (transform.position.y < -vertExtent){//Abajo-> Rebote arriba
-			Cursor.lockState = CursorLockMode.Confined;
+		if (transform.position.y < -vertExtent){//Abajo-> Rebote arriba
+			
 			Debug.Log("abajo");
-			if(velocity.y <= offset){
+			Bounce(Vector3.up);
+			if(velocity.y < offset){
 				grounded = true;
 			}
-			velocity = Vector3.zero;
+			
+			
 		}
-		if(newPosition.x != transform.position.x || newPosition.y != transform.position.y)
-			transform.position = (newPosition);
+
 			
 	}
 
@@ -128,6 +131,13 @@ public class BallThrowScript : MonoBehaviour {
 	void Movement (Vector3 move){
 		transform.position = transform.position + move;
 	}
+
+	void Bounce(Vector3 normalVector){
+		var speed = velocity.magnitude;
+        var direction = Vector3.Reflect(velocity.normalized, normalVector);
+		velocity = speed * direction;
+	}
+
 
 
 }

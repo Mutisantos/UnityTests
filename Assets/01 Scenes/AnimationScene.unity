@@ -213,10 +213,10 @@ MonoBehaviour:
   dragged: 0
   velocity: {x: 0, y: 0}
   initialSpeed: {x: 0, y: 0}
-  gravity: 100
+  gravity: 50
   bounceFactor: 0
   offset: 0
-  mouseForceFactor: 10
+  mouseForceFactor: 3
 --- !u!135 &1073829691
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -337,7 +337,7 @@ Camera:
   far clip plane: 1000
   field of view: 60
   orthographic: 1
-  orthographic size: 7.28
+  orthographic size: 10
   m_Depth: -1
   m_CullingMask:
     serializedVersion: 2
@@ -379,4 +379,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   VertExtent: 0
   HorzExtent: 0
-  offset: 1.5
+  offset: 2
